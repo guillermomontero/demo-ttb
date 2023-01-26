@@ -135,8 +135,4 @@ export default {
   },
 
   loading: false,
-
-  router: {
-
-  }
 }
