@@ -1,135 +1,146 @@
 <template>
-  <main class="flex flex-col flex-auto overflow-y-auto overflow-x-hidden bg-stale-200">
-    <div class="
-      relative
-      flex 
-      items-center 
-      justify-center 
-      w-full  
-      bg-teal-700
-      min-h-[96px]
-      md:min-h-[240px]
-      lg:min-h-[300px]
-      xl:min-h-[400px]
-      md:bg-inherit
-      md:bg-[url('~/static/img/clubes-santanagolf.jpg')]
-      md:bg-center
-      md:bg-cover
-      md:bg-no-repeat">
-      <BaseSearchBar 
-        :zonas="zonas"
-        @get-filtered-zonas="getFilteredZonas"
-      />
-      <h4 class="absolute bottom-4 right-4 hidden md:block">
-        <a href="#" class="flex flex-col justify-center px-3 py-1 text-sm text-center text-white bg-black opacity-60 hover:opacity-80" title="Santana Golf (Málaga)">
-          <span>SANTANA GOLF</span>
-          <span class="text-xs">Málagas</span>
-        </a>
-      </h4>
-    </div>
+  <section class="flex-auto bg-slate-200">
 
-    <div
-      class="container mx-auto flex-auto py-5 px-4 md:py-10"
-    >
-      <h2 class="text-2xl md:text-4xl font-extrabold text-gray-700 text-center mb-5 md:mb-8">Featured regions</h2>
-      
-      <div v-if="zonasData.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-8 xl:gap-16 mb-8 md:mb-10 xl:mb-14">
-        <BaseCard
-          v-for="zona in zonasData"
-          :key="zona.nombre"
-          :zona='zona'
-        />
-      </div>
-      <span v-else>
-        no result
-      </span>
+    <SelectedClubAndSearchBar v-if="club" :club="club" :compBackgroundImg="compBackgroundImg"/>
+
+    <div class="container mx-auto py-5 px-4 md:py-10">
+      <h2 class="text-2xl md:text-4xl font-extrabold text-center mb-5 md:mb-8">{{ $t('featuredRegions') }}</h2>
+
+      <!-- With skeleton -->
+
+      <!-- <transition-group class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-8 xl:gap-16 mb-8 md:mb-10 xl:mb-14">
+        <template v-if="isCardFeaturedRegionSkeletonLoading">
+          <CardFeaturedRegionSkeleton
+            v-for="(item, index) in itemsRegionesSkeleton" 
+            :key="index" 
+          />
+        </template>
+        
+        <template v-if="regiones.length && !isCardFeaturedRegionSkeletonLoading">
+          <CardFeaturedRegion
+            v-for="region in regiones"
+            :key="region.id"
+            :region='region'
+          />
+        </template>
+      </transition-group> -->
+
+      <!-- Without skeleton -->
+
+      <transition-group v-if="regiones.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-8 xl:gap-16 mb-8 md:mb-10 xl:mb-14">
+        <!-- <template v-if="regiones.length"> -->
+          <CardFeaturedRegion
+            v-for="region in regiones"
+            :key="region.id"
+            :region='region'
+          />
+        <!-- </template> -->
+      </transition-group>
     </div>
-  </main>
+  </section>
 </template>
 
 <script>
-
+import { mapState } from 'vuex';
+import SelectedClubAndSearchBar from '@/components/main/SelectedClubAndSearchBar.vue';
+import CardFeaturedRegion from '@/components/main/CardFeaturedRegion.vue';
+import CardFeaturedRegionSkeleton from '@/components/main/skeletones/CardFeaturedRegionSkeleton.vue';
 
 export default {
   name: 'IndexPage',
 
   layout: 'default',
 
+  components: { CardFeaturedRegion, CardFeaturedRegionSkeleton, SelectedClubAndSearchBar },
+
+
   data() {
     return {
-      zonas: [
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-mallorca.jpg',
-          nombre: 'Mallorca',
-          nCourses: 12,
-          precioDesde: 42,
-        },
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-lisboa.jpg',
-          nombre: 'Lisboa',
-          nCourses: 8,
-          precioDesde: 36,
-        },
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-costa-sol.jpg',
-          nombre: 'Costa del Sol',
-          nCourses: 23,
-          precioDesde: 19,
-        },
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-andalucia.jpg',
-          nombre: 'Andalucía',
-          nCourses: 34,
-          precioDesde: 26,
-        },
-      ],
-      zonasData: [
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-mallorca.jpg',
-          nombre: 'Mallorca',
-          nCourses: 12,
-          precioDesde: 42,
-        },
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-lisboa.jpg',
-          nombre: 'Lisboa',
-          nCourses: 8,
-          precioDesde: 36,
-        },
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-costa-sol.jpg',
-          nombre: 'Costa del Sol',
-          nCourses: 23,
-          precioDesde: 19,
-        },
-        {
-          img: 'https://teetimesbooking.dasenred.com/maqueta/img/regiones-andalucia.jpg',
-          nombre: 'Andalucía',
-          nCourses: 34,
-          precioDesde: 26,
-        },
-      ],
-      oldScroll: 0,
-      isScrollUp: false,
+      regiones: [],
+      club: null,
+      zonas: [],
+      regionesResponse: null,
+      showBaseAlert: false,
+      alert: {
+        type: 'success',
+        title: 'Error title',
+        messages: ['Error 1', 'Error 2'],
+      },
+      itemsRegionesSkeleton: [1, 2, 3, 4, 5, 6, 7, 8],
+      isCardFeaturedRegionSkeletonLoading: false,
     }
   },
 
-  mounted() {
-    this.$nextTick(() => this.getScrollPosition());
+  async fetch() {
+    await this.getRegiones();
+    await this.getRandomClub();
+  },
+
+  computed: {
+    ...mapState({
+      viewportWidth: state => state.viewportWidth,
+    }),
+
+    /** Imagen a mostrar de fondo según tamaño */
+    compBackgroundImg() {
+      if (!this.viewportWidth) return 'url(https://teetimesbooking.dasenred.com/maqueta/img/clubes-santanagolf.jpg)';
+      if (this.viewportWidth >= 768 ) return `url(${this.club.img})`;
+      return '';
+    }
   },
 
   methods: {
-    getScrollPosition() {
-      window.addEventListener('scroll', (e) => {
-        this.isScrollUp =  this.oldScroll > e.target.scrollingElement.scrollTop;
-        this.oldScroll = e.target.scrollingElement.scrollTop;
-      })
+    /** Fake API club aleatorio */
+    fetchRandomClub() {
+      return new Promise((resolve) => {
+        const clubes = [
+          { nombre: 'Santana Golf', ciudad: 'Málaga', altFoto: 'Santana Golf', img: 'https://teetimesbooking.dasenred.com/maqueta/img/clubes-santanagolf.jpg' },
+          { nombre: 'Santana Golf 1', ciudad: 'Jaén', altFoto: 'Santana Golf', img: 'https://teetimesbooking.dasenred.com/maqueta/img/clubes-santanagolf.jpg' },
+          { nombre: 'Santana Golf 2', ciudad: 'Córdoba', altFoto: 'Santana Golf', img: 'https://teetimesbooking.dasenred.com/maqueta/img/clubes-santanagolf.jpg' },
+          { nombre: 'Santana Golf 3', ciudad: 'Sevilla', altFoto: 'Santana Golf', img: 'https://teetimesbooking.dasenred.com/maqueta/img/clubes-santanagolf.jpg' },
+        ];
+
+        const randomClub = Math.floor(Math.random() * (clubes.length - 1));
+        resolve(clubes[randomClub]);
+      });
     },
 
-    getFilteredZonas(e) {
-      if (e) this.zonasData = [e];
-      else this.zonasData = [];
-    }
+    /** Obtener un club aleatorio */
+    async getRandomClub() {
+      try {
+        const response = await this.fetchRandomClub();
+        
+        this.club = response;
+      } catch (error) {
+        // alert({ error });
+      }
+    },
+    
+    /** Obtener regiones */
+    async getRegiones() {
+      try {
+        this.isCardFeaturedRegionSkeletonLoading = true;
+        const response = await this.$api.home.getListarCajitas();
+        this.regiones = response.listaCajitas.map(region => ({ id: region.idCajita, nombre: region.desc, isLocation: true, nCourses: region.numRecorridos, precioDesde: 0, altFoto: region.desc, img: region.imagen, titulo: region.titulo }));
+      } catch (err) {
+        console.log('catch getRegiones', err.data.msg);
+      } finally {
+        this.isCardFeaturedRegionSkeletonLoading = false;
+      }
+    },
   }
 }
 </script>
+
+<style scoped>
+.fade-in-enter-active,
+.fade-in-leave-active {
+  transition: opacity .5s ease;
+}
+
+.fade-in-enter-from,
+.fade-in-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+</style>

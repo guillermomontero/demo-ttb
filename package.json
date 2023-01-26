@@ -1,6 +1,6 @@
 {
-  "name": "teetimebooking-nuxt",
-  "version": "1.0.0",
+  "name": "teetimesbooking-v2",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -12,24 +12,28 @@
     "lintfix": "prettier --write --list-different ."
   },
   "dependencies": {
-    "@fortawesome/free-brands-svg-icons": "^6.1.2",
-    "@fortawesome/free-solid-svg-icons": "^6.1.2",
-    "@fortawesome/vue-fontawesome": "^2.0.8",
+    "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/i18n": "^7.2.3",
+    "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
     "core-js": "^3.19.3",
     "nuxt": "^2.15.8",
+    "uuid": "^9.0.0",
     "vue": "^2.6.14",
     "vue-server-renderer": "^2.6.14",
-    "vue-template-compiler": "^2.6.14",
-    "webpack": "^4.46.0"
+    "vue-tailwind": "2.5.1",
+    "vue-template-compiler": "^2.7.10",
+    "webpack": "4.46.0"
   },
   "devDependencies": {
-    "@nuxt/postcss8": "^1.1.3",
-    "@nuxtjs/tailwindcss": "^4.2.1",
-    "autoprefixer": "^10.4.8",
-    "eslint-config-prettier": "^8.3.0",
-    "postcss": "^8.4.14",
-    "prettier": "^2.5.1",
-    "tailwindcss": "^3.1.7"
+    "@nuxt/postcss8": "1.1.3",
+    "@nuxtjs/dotenv": "1.4.1",
+    "@nuxtjs/tailwindcss": "4.2.1",
+    "@tailwindcss/forms": "0.5.3",
+    "autoprefixer": "10.4.8",
+    "eslint-config-prettier": "8.3.0",
+    "postcss": "8.4.14",
+    "prettier": "2.5.1",
+    "tailwindcss": "3.1.7"
   }
 }

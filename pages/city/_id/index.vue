@@ -1,20 +1,13 @@
 <template>
-  <div class="h-screen">
-    city page id: {{ this.$route.params.id }}
-  </div>
+  <section class="flex-auto">
+    {{ $t('cityPage') }} {{ this.$route.params.id }}
+  </section>
 </template>
 
-<script>
-export default {
-  // computed: {
-  //   paramsId() {
-  //     return this.$route.params.id;
-  //   }
-  // },
+<script>;
 
-  mounted() {
-    console.log(this.$route);
-  }
+export default {
+  name: 'PageCityId',
 }
 </script>
 

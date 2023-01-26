@@ -1,30 +1,37 @@
 <template>
   <NuxtLink 
-    :class="`${color} ${colorHover} ${size}`"
-    :to="link.path"
+    :class="`${disabled ? disabledColorHover : colorHover} ${size} ${disabled ? 'link-disabled' : color} ${hasUnderlineWhenHover? 'hover:underline' : ''}`"
+    :to="localePath(link.path)"
+    custom
+    v-slot="{navigate}"
   >
-    {{ link.label }}
+    <span v-if="!disabled" @click="navigate" role="link" class="cursor-pointer">
+      {{ $t(link.label) }}
+    </span>
+    <span v-else>{{ $t(link.label) }}</span>
   </NuxtLink>
 </template>
 
 <script>
 export default {
+  name: 'BaseLink',
+  
   props: {
-    link: {
-      type: Object,
-      default: () => {}
-    },
-    color: {
-      type: String,
-      default: 'text-gray-300'
-    },
-    colorHover: {
-      type: String,
-      default: 'hover:text-white'
-    },
-    size: {
-      type: String,
-      default: 'text-base'
+    /** Objeto con información de la ruta a visitar */
+    link: { type: Object, default: () => {} },
+    /** Color del texto */
+    color: { type: String, default: 'text-gray-300' },
+    /** Color del texto al hacer hover */
+    colorHover: { type: String, default: 'hover:text-white' },
+    /** Tamaño del link */
+    size: { type: String, default: '' },
+    disabled: { type: Boolean, dfault: false },
+    hasUnderlineWhenHover: { type: Boolean, dfault: false },
+  },
+
+   computed: {
+    disabledColorHover() {
+      return `hover:${this.color}`;
     }
   }
 }

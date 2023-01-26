@@ -3,12 +3,13 @@
     flex
     flex-row
     justify-center
-    absolute 
+    fixed 
     h-16 
     w-full 
     bg-teal-700 
     left-0 
-    bottom-0 
+    bottom-0
+    md:absolute 
     md:top-0 
     md:right-0 
     md:left-auto 
@@ -19,59 +20,114 @@
       v-for="action in navBarActions"
       :key="action.text"
       :navBarAction="action"
-      @open-action-modal='openActionModal'
     />
-    <BaseDialog v-if="showBaseDialog" @close="closeBaseDialog"/>
   </nav>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import NavBarAction from '@/components/header/NavBarAction.vue';
 
 export default {
+  name: 'NavBar',
+
   components: { NavBarAction },
 
   data() {
     return {
-      showBaseDialog: false,
       navBarActions: [
         {
+          id: 'login',
           icon: 'https://teetimesbooking.dasenred.com/maqueta/img/ico-login.svg',
-          text: 'LOGIN',
+          text: this.$t('login').toUpperCase(),
+          path: `/login`,
+          activePath: `/login`,
           bgColor: '',
+          bgColorLinkActive: 'bg-teal-800',
           bgColorHover: 'hover:bg-teal-800',
+          showWhenUserLoggedIn: false,
         },
         {
+          id: 'sign-up',
           icon: 'https://teetimesbooking.dasenred.com/maqueta/img/ico-user-add.svg',
-          text: 'SIGN UP',
+          text: this.$t('signUp').toUpperCase(),
+          path: `/sign-up`,
+          activePath: `/sign-up`,
+          bgColor: '',
+          bgColorLinkActive: 'bg-teal-800',
+          bgColorHover: 'hover:bg-teal-800',
+          fct: 'navToSignUpPage',
+          showWhenUserLoggedIn: false,
+        },
+        {
+          id: 'private-area',
+          icon: 'https://teetimesbooking.dasenred.com/maqueta/img/ico-user-add.svg',
+          text: this.$t('areaPrivada').toUpperCase(),
+          path: '/private-area/my-profile',
+          activePath: '/private-area',
+          bgColor: '',
+          bgColorLinkActive: 'bg-teal-800',
+          bgColorHover: 'hover:bg-teal-800',
+          showWhenUserLoggedIn: true,
+        },
+        {
+          id: 'log-out',
+          icon: 'https://teetimesbooking.dasenred.com/maqueta/img/ico-user-add.svg',
+          text: this.$t('terminarSesion').toUpperCase(),
+          path: '/',
+          activePath: '/',
           bgColor: '',
           bgColorHover: 'hover:bg-teal-800',
+          showWhenUserLoggedIn: true,
         },
-        // {
-        //   icon: 'https://teetimesbooking.dasenred.com/maqueta/img/ico-user-add.svg',
-        //   text: 'LANGUAGE',
-        //   bgColor: '',
-        //   bgColorHover: 'hover:bg-teal-800',
-        // },
         {
+          id: 'cart',
           icon: 'https://teetimesbooking.dasenred.com/maqueta/img/ico-shopping-cart.svg',
-          text: 'CART',
-          bgColor: 'bg-amber-500',
-          bgColorHover: 'hover:bg-amber-600',
-          hasActionIcon: true,
-          textActionIcon: '3',
+          text: this.$t('cart').toUpperCase(),
+          path: '/cart',
+          activePath: '/cart',
+          bgColor: '',
+          bgColorLinkActive: '',
+          bgColorHover: 'hover:bg-teal-800',
+          hasActionIcon: false,
+          textActionIcon: '0',
+          alwaysShow: true
         },
-      ]
+      ],
     }
   },
 
-  methods: {
-    openActionModal() {
-      this.showBaseDialog = true;
+  watch: {
+    cartItems() {
+      if (this.cartItems < 1) {
+        this.navBarActions.find(action => action.id === 'cart').bgColor = '';
+        this.navBarActions.find(action => action.id === 'cart').bgColorLinkActive = 'bg-teal-800';
+        this.navBarActions.find(action => action.id === 'cart').bgColorHover = 'hover:bg-teal-800';
+        this.navBarActions.find(action => action.id === 'cart').hasActionIcon = false;
+        this.navBarActions.find(action => action.id === 'cart').textActionIcon = this.cartItemsText;
+      } else {
+        this.navBarActions.find(action => action.id === 'cart').bgColor = 'bg-amber-500';
+        this.navBarActions.find(action => action.id === 'cart').bgColorLinkActive = 'bg-amber-600';
+        this.navBarActions.find(action => action.id === 'cart').bgColorHover = 'hover:bg-amber-600';
+        this.navBarActions.find(action => action.id === 'cart').hasActionIcon = true;
+        this.navBarActions.find(action => action.id === 'cart').textActionIcon = this.cartItemsText;
+      }
     },
+  },
 
-    closeBaseDialog() {
-      this.showBaseDialog = false;
+  computed: {
+    ...mapState({
+      cartItems: state => state.cart.cartItems,
+      cartItemsText: state => String(state.cart.cartItems),
+    }),
+  },
+
+  mounted() {
+    if (this.cartItems > 0) {
+      this.navBarActions.find(action => action.id === 'cart').bgColor = 'bg-amber-500';
+      this.navBarActions.find(action => action.id === 'cart').bgColorHover = 'hover:bg-amber-600';
+      this.navBarActions.find(action => action.id === 'cart').hasActionIcon = true;
+      this.navBarActions.find(action => action.id === 'cart').textActionIcon = this.cartItemsText;
     }
   }
 }

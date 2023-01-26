@@ -7,15 +7,13 @@
 
 <script>
 export default {
+  name: 'BaseActionIcon',
+  
   props: {
-    icon: {
-      type: String,
-      default: ''
-    },
-    freeText: {
-      type: String,
-      default: ''
-    }
+    /** Icono a mostrar en el botón */
+    icon: { type: String, default: '' },
+    /** Texto a mostrar en el botón */
+    freeText: { type: String, default: '' }
   }
 }
 </script>

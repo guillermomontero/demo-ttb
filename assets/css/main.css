@@ -1,27 +1,79 @@
+/* FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
+/* @layer base { */
+  /* :root { */
     /* --green-main: 15, 118, 110;
-    --green-main-hover: 17, 94, 89;
-    --orange-main: 245, 158, 11;
-    --orange-main-hover: 217, 119, 6;
-    --white-main: 255, 255, 255;
-    --gray-bg: 226, 232, 240; */
     /* ... */
+  /* } */
+/* } */
+
+@layer components {
+  .input {
+    @apply block w-full m-0 px-3 py-1.5 text-base font-semibold bg-white bg-clip-padding border border-solid border-gray-400;
+  }
+  .btn {
+    @apply flex items-center justify-center  w-fit py-2 px-4 font-bold shadow-sm focus:outline-none uppercase;
+  }
+  .btn-default {
+    @apply text-gray-700 bg-white hover:bg-slate-100;
+  }
+  .btn-primary {
+    @apply text-white bg-amber-500 hover:bg-amber-600;
+  }
+  .btn-disabled {
+    @apply text-white bg-gray-300 hover:bg-gray-300 cursor-default;
+  }
+  .btn-small {
+    @apply flex py-1 px-2 text-xs;
+  }
+  /* .btn-disabled {
+    @apply py-2 px-4 font-bold bg-gray-100 hover:bg-gray-100 text-gray-400 shadow-sm focus:outline-none cursor-not-allowed;
+  } */
+  .link { 
+    @apply text-amber-500 no-underline hover:text-gray-700 hover:underline;
+  }
+  .disabled {
+    @apply bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed;
+  }
+  .link-disabled {
+    @apply text-gray-400  cursor-not-allowed;
   }
 }
 
-@layer components {
-  .btn {
-    @apply py-2 px-4 font-bold bg-amber-500 hover:bg-amber-600 shadow-sm focus:outline-none;
-  }
-  .btn-svg {
-    @apply flex ml-3 py-2 px-4 items-center bg-amber-500 hover:bg-amber-600 shadow-sm focus:outline-none;
-  }
-  .btn-small {
-    @apply flex ml-1 py-2 px-3 text-sm;
-  }
+html {
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4; /* 3 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
+  width: 100%;
+  height: 100%;
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0; /* 1 */
+  line-height: inherit; /* 2 */
+  width: 100%;
+  height: 100%;
+}
+
+#__nuxt {
+  width: 100%;
+  height: 100%;
+}
+
+#__layout {
+  width: 100%;
+  height: 100%;
 }
