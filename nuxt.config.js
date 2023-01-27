@@ -130,7 +130,7 @@ export default {
   },
 
   server: {
-    port:  process.env.PORT, // default: 3000
+    port:  process.env.PORT, // default: 8080
     host: process.env.HOST // default: 0.0.0.0
   },
 
